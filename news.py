@@ -19,7 +19,7 @@ def getNews(sourceId):
     newses = newsapi.get_everything(sources=sourceId,domains='bbc.co.uk,techcrunch.com',from_param=p_date,to=c_date,language='en',sort_by='relevancy',page=2)
     newsData = []
     for news in newses['articles']:
-        list = [random.randint(0, 100), news['publishedAt'], news['title'],news['content'], 'REAL']
+        list = [random.randint(0, 100), news['title'],news['content'],news['publishedAt'], 'REAL']
         newsData.append(list)
     return newsData
 
@@ -43,42 +43,43 @@ print('Total News: ', len(dataList))
 
 import pandas as pd
 df = pd.DataFrame.from_records(dataList)
-df.columns = ['','publishedAt','title','text','label']
+df.columns = ["", 'title','text','publishedAt','label']
 print(df)
 
-# trainData = pd.read_csv('news.csv')
-# trainData.columns = ['', 'title', 'text', 'label']
-# data = [trainData, df]
-# df = pd.concat(data)
-# print(df.head())
+trainData = pd.read_csv('data/news.csv')
+trainData.columns = [ 'title', 'text', 'subject','date', 'label']
+trainData = trainData.drop("subject", axis =1)
+data = [trainData, df]
+df = pd.concat(data)
+print(df.head())
 
-# training_x, testing_x, training_y, testing_y = train_test_split(
-#     df['text'], df.label, test_size=0.3, random_state=7)
+training_x, testing_x, training_y, testing_y = train_test_split(
+    df['text'], df.label, test_size=0.3, random_state=7)
 
-# count_vectorizer = CountVectorizer(stop_words='english', max_df=0.7)
-# feature_train = count_vectorizer.fit_transform(training_x)
-# feature_test = count_vectorizer.transform(testing_x)
+count_vectorizer = CountVectorizer(stop_words='english', max_df=0.7)
+feature_train = count_vectorizer.fit_transform(training_x)
+feature_test = count_vectorizer.transform(testing_x)
 
-# classifier = PassiveAggressiveClassifier(max_iter=50)
-# classifier.fit(feature_train, training_y)
+classifier = PassiveAggressiveClassifier(max_iter=50)
+classifier.fit(feature_train, training_y)
 
-# prediction = classifier.predict(feature_test)
-# score = accuracy_score(testing_y, prediction)
+prediction = classifier.predict(feature_test)
+score = accuracy_score(testing_y, prediction)
 
-# print("Accuracy: ", score*100)
-
-
-
-# test_data = pd.read_csv('test_data.csv')
-# test_labels = test_data.label
-# test_data.head()
-
-# test_data_feature = count_vectorizer.transform(test_data['text'])
-# prediction = classifier.predict(test_data_feature)
+print("Accuracy: ", score*100)
 
 
-# for i in range(len(test_labels)):
-#     print(test_labels[i], prediction[i])
 
-# score = accuracy_score(test_labels, prediction)
-# print("Accuracy: ", score*100, "%")
+test_data = pd.read_csv('data/test_data.csv')
+test_labels = test_data.label
+test_data.head()
+
+test_data_feature = count_vectorizer.transform(test_data['text'])
+prediction = classifier.predict(test_data_feature)
+
+
+for i in range(len(test_labels)):
+    print(test_labels[i], prediction[i])
+
+score = accuracy_score(test_labels, prediction)
+print("Accuracy: ", score*100, "%")
