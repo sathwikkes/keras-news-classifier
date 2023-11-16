@@ -1,5 +1,5 @@
-data/news.csv
-data/test_data.csv
+#data/news.csv
+#data/test_data.csv
 .DS_Store
 api_key.py
 # Byte-compiled / optimized / DLL files
