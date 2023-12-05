@@ -1,5 +1,6 @@
 from newsapi import NewsApiClient
 import random
+import pandas as pd
 from api_key import API_KEY
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -7,7 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import PassiveAggressiveClassifier
 
 from datetime import datetime, timedelta
-prev_date = datetime.today() - timedelta(days=30)
+prev_date = datetime.today() - timedelta(days=20)
 next_date = datetime.today() - timedelta(days=0)
 p_date = str(prev_date.year)+'-'+str(prev_date.month)+'-'+str(prev_date.day)
 c_date = str(next_date.year)+'-'+str(next_date.month)+'-'+str(next_date.day)
@@ -40,8 +41,6 @@ for sourceId in sourceList:
 
 print('Total News: ', len(dataList))
 
-
-import pandas as pd
 df = pd.DataFrame.from_records(dataList)
 df.columns = ["", 'title','text','publishedAt','label']
 print(df)
@@ -71,6 +70,9 @@ print("Accuracy: ", score*100)
 
 
 test_data = pd.read_csv('data/test_data.csv')
+test_data = test_data.iloc[:,0:4]
+test_data = test_data[test_data["label"].isin(["REAL", "FAKE"])]
+print(test_data['label'].value_counts())
 test_labels = test_data.label
 test_data.head()
 
